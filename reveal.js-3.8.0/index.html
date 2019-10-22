@@ -26,10 +26,10 @@
 <div class="reveal">
   <div class="slides">
 
-
     <!--intro-->
     <section>
       <h2>Functional Reactive Programming (101)</h2>
+      <p><q>when data arrives, let it flow through series a of functions to be processed, to get the desired outcome</q></p>
       <br/><br/><br/><br/>
       <small>Email: kctang@big2.net | Twitter: @kctang</small>
       <br/>
@@ -39,30 +39,101 @@
     <section>
       <h3>Functional Reactive Programming</h3>
       <ul>
+        <li class="fragment">Manage <span style="display: inline-block" class="fragment highlight-blue">data flow & transformation</span>
+          with
+          concepts borrowed from functional programming (declarative, chaining, immutability)
+        </li>
         <li class="fragment"><span style="display: inline-block" class="fragment highlight-blue">Asynchronous</span>
           programming style to manage events that happens <span class="fragment highlight-green"
                                                                 style="display: inline-block">over a period time</span>
         </li>
-        <li class="fragment">Manage <span style="display: inline-block" class="fragment highlight-blue">data flow & transformation</span>
-          , where the
-          program has little control on data's time of arrival
-        </li>
-        <li class="fragment"><span style="display: inline-block" class="fragment highlight-blue">Observable</span> as a
-          core type
-        </li>
-        <li class="fragment"><span style="display: inline-block" class="fragment highlight-blue">Operators</span> used
-          to create, transform, filter and combine data
-        </li>
       </ul>
+    </section>
+
+    <!--data flow & transform-->
+    <section>
+      <section>
+        <h3>Data Flow & Transformation</h3>
+        <p>Example: <q>Multiply each value by 7; Get the total value for all even numbers</q></p>
+        <pre><code class="hljs" data-trim data-line-numbers="3-5">const data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+data.map(val =&gt; val * 7)
+    .filter(val =&gt; val % 2 === 0)
+    .reduce((total, current) =&gt; total + current, 0)
+&gt; 210</code></pre>
+        <ul>
+          <li style="list-style: none">#3. Multiply each number by 7</li>
+          <li style="list-style: none">#4. Filter for even numbers</li>
+          <li style="list-style: none">#5. Sum filtered values to get the answer</li>
+        </ul>
+      </section>
+
+      <section>
+        <h3>Data Flow & Transformation</h3>
+        <p>Example uses functional programming concepts:</p>
+        <ul>
+          <li>Declarative</li>
+          <li>Function chaining</li>
+          <li>Immutable data</li>
+        </ul>
+      </section>
+
+      <section>
+        <h3>Data Over a Period of Time</h3>
+        <pre><code class="hljs" data-trim>// in previous example, data is a fixed length array
+// and all elements are known before it is used
+const data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]</code></pre>
+        <p><q style="font-size: smaller">What if I don't know how much data needs to be processed?</q></p>
+        <p><q style="font-size: smaller">What if data is not ready to be processed?</q></p>
+        <pre><code class="hljs" data-trim>// an observable that generates 1 to 10
+// over a period of time (every 500ms)
+const data$ = interval(500).pipe(
+  map(no =&gt; no + 1),
+  take(10)
+)</code></pre>
+        <ul>
+          <li>Can we still map, filter, reduce, etc?</li>
+          <li class="fragment">Wait, what is this <span style="display: inline-block" class="fragment highlight-blue">observable</span>
+            thing?
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h3>Observable Chain</h3>
+        <ul style="font-size: smaller">
+          <li>~ takes observable as input instead of fixed length array data</li>
+          <li><a href="https://rxjs-dev.firebaseapp.com/guide/operators">Operators</a> chaining used to
+            create or manipulate observables, mimicing function chaining
+          </li>
+        </ul>
+        <pre><code class="hljs" data-trim data-line-numbers="7-9">const data$ = interval(500).pipe(
+  map(no =&gt; no + 1),
+  take(5)
+)
+
+data$.pipe(
+  map(val =&gt; val * 7),
+  filter(val =&gt; val % 2 === 0),
+  reduce((total, current) =&gt; total + current, 0)
+).subscribe(
+  val =&gt; print(`Subscription got val [${val}]`),
+  e =&gt; console.error(e),
+  () =&gt; print('Subscription done')
+)</code></pre>
+      </section>
     </section>
 
     <!--async prog-->
     <section>
       <section>
         <h3>Asynchronous Programming</h3>
+        <p><q>Promise is an ~ style</q></p>
+        <p><q>Observable is an ~ style</q></p>
       </section>
       <section>
-        <h3>Async Scenarios</h3>
+        <h3>Common Scenarios</h3>
+        <p>Without an asynchronous programming, web browser (JavaScript engine) will hang when...</p>
         <ul>
           <li>File read/write [s]</li>
           <li>Make REST API call [s]</li>
@@ -77,68 +148,11 @@
         </p>
       </section>
       <section>
-        <h3>Async Solutions</h3>
-        <ul>
-          <li>Callbacks (Sync/Async)</li>
-          <li>Promise</li>
-          <li>Observable</li>
-        </ul>
-      </section>
-      <section>
-        <h3>Synchronous Execution</h3>
-        <div style="display: flex">
-          <div>
-            <img src="images/async-01.png">
-          </div>
-          <div>
-            <code><pre class="fragment reveal">Output:
-> 5
-> done</pre>
-            </code>
-          </div>
-        </div>
-        <ul>
-          <li>Execute according to code sequence</li>
-        </ul>
-      </section>
-      <section>
-        <h3>Synchronous Callback</h3>
-        <div style="display: flex">
-          <div>
-            <img src="images/async-02.png">
-          </div>
-          <div>
-            <code><pre class="fragment reveal">Output:
-> 5
-> done</pre>
-            </code>
-          </div>
-        </div>
-        <ul>
-          <li>Execute according to code sequence</li>
-        </ul>
-      </section>
-      <section>
-        <h3>Asynchronous Callback</h3>
-        <div style="display: flex">
-          <div>
-            <img src="images/async-03.png">
-          </div>
-          <div>
-            <code><pre class="fragment reveal" style="width: 100%">Output:
-> done
-(1 second later...)
-> 5</pre>
-            </code>
-          </div>
-        </div>
-        <ul>
-          <li>Simple async code execution</li>
-          <li>Modern "goto" statement, aka "callback hell"</li>
-        </ul>
-      </section>
-      <section>
         <h3>Promise</h3>
+        <ul>
+          <li>Produce one value when <span class="fragment highlight-blue">resolve()</span> is called</li>
+          <li>Runs when promise object is created</li>
+        </ul>
         <div style="display: flex">
           <div>
             <img src="images/async-04.png">
@@ -146,18 +160,20 @@
           <div>
             <code><pre class="fragment reveal" style="width: 100%">Output:
 > done
+(500ms later...)
 > 5</pre>
             </code>
           </div>
         </div>
-        <ul>
-          <li>Simple async code execution</li>
-          <li>Promise chaining helps to avoid "callback hell"</li>
-          <li>Produce a value when <span class="fragment highlight-blue">.resolve()</span> is called</li>
-        </ul>
       </section>
       <section>
         <h3>Observable</h3>
+        <ul>
+          <li>Like Promise, produce value asynchronously</li>
+          <li>Produce a value whenever <span class="fragment highlight-blue">.next()</span> is called</li>
+          <li>Done when <span class="fragment highlight-blue">.complete()</span> is called</li>
+          <li>Does not "run" until subscribed to</li>
+        </ul>
         <div style="display: flex">
           <div>
             <img src="images/async-05.png">
@@ -165,137 +181,49 @@
           <div>
             <code><pre class="fragment reveal" style="width: 100%">Output:
 > done
+(100ms later...)
 > 5
+(200ms later...)
+> 6
+(300ms later...)
+> 0.666
 > really done</pre>
             </code>
           </div>
         </div>
-        <ul>
-          <li>Like Promise, produce value asynchronously</li>
-          <li>Produce a value whenever <span class="fragment highlight-blue">.next()</span> is called</li>
-          <li>Done when <span class="fragment highlight-blue">.complete()</span> is called</li>
-        </ul>
-      </section>
-      <section>
-        <h3>Characteristics Of "Types"</h3>
-        <div style="display: flex">
-          <div>
-            <img src="images/async-06.png">
-          </div>
-          <ul>
-            <li>Function, promise returns one value</li>
-            <li>Iterator, observable returns multiple values</li>
-            <li><span class="fragment highlight-blue">Function, iterator</span> runs when called. You pull data. You
-              control time.
-            </li>
-            <li><span class="fragment highlight-green">Promise, observable</span> resolve value(s) when available. Data
-              pushed to you. No control over time.
-            </li>
-          </ul>
-        </div>
       </section>
     </section>
 
-    <!--data flow & transform-->
+    <!--examples-->
     <section>
       <section>
-        <h3>FP: Data Flow & Transformation</h3>
-        <pre><code class="hljs" data-trim>
-const data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-
-data.map(val => val * 7)
-> [ 7, 14, 21, 28, 35, 42, 49, 56, 63, 70 ]
-
-</code></pre>
-        <ul>
-          <li>Objective: Multiply each value by 7, then get the total value for all even numbers</li>
-          <li>Start with: Multiply each number by 7</li>
-          <li>Result is an array of values multiplied by seven</li>
-        </ul>
+        <h3>Examples From Production Applications</h3>
       </section>
-
       <section>
-        <h3>FP: Data Flow & Transformation</h3>
-        <pre><code class="hljs" data-trim>
-const data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-
-data.map(val => val * 7)
-    .filter(val => val % 2 === 0)
-> [ 14, 28, 42, 56, 70 ]
-</code></pre>
+        <h3>Example 1: Compress and Upload/Save Image</h3>
+        <p>Observable chain manage:</p>
         <ul>
-          <li>Filter for even numbers</li>
-          <li>Result is an array of even numbers</li>
+          <li>Update UI with processing/upload progress</li>
+          <li>Compress image</li>
+          <li>Upload to server via REST API if running as web app</li>
+          <li>Save to IndexDB/WebSQL if running as mobile app</li>
+          <li>User can cancel upload process</li>
+          <li>Support retry on network failure</li>
+          <li>Error handling</li>
         </ul>
       </section>
-
+      <section data-background="./images/example-01.png" data-background-size="contain"></section>
       <section>
-        <h3>FP: Data Flow & Transformation</h3>
-        <pre><code class="hljs" data-trim>
-const data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-
-data.map(val => val * 7)
-    .filter(val => val % 2 === 0)
-    .reduce((total, current) => total + current, 0)
-> 210
-</code></pre>
+        <h3>Example 2: Download associated images and save to disk</h3>
+        <p>Observable chain manage:</p>
         <ul>
-          <li>Sum up the values to get the answer</li>
-          <li>Uses functional style
-            <ul>
-              <li>Declarative</li>
-              <li>No data mutation</li>
-              <li>Function chaining</li>
-            </ul>
-          </li>
+          <li>Make REST API call to get image URLs for a record</li>
+          <li>For each image URL, download and save to disk</li>
+          <li>Download up to 3 images concurrently</li>
+          <li>When done, update application state (to render in UI)</li>
         </ul>
       </section>
-
-      <section>
-        <h3>FRP: FP with data from Observable</h3>
-        <pre><code class="hljs" data-trim>
-// data is 'ready' in an iterator
-const data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-
-// what if data is generate every 500ms?
-const data$ = interval(500).pipe(
-  map(no => no + 1),
-  take(10)
-)
-data$.subscribe(val => console.log(val))
-
-</code></pre>
-        <ul>
-          <li>What if data is not always ready to be processed?</li>
-          <li>Can we still map, filter, reduce, etc?</li>
-          <li>Hint: If you can, you are doing functional reactive programming.</li>
-        </ul>
-      </section>
-
-      <section>
-        <h3>Operators</h3>
-        <pre><code class="hljs" data-trim>const data$ = interval(500).pipe(
-  map(no => no + 1),
-  take(5)
-)
-
-data$.pipe(
-  map(val => val * 7),
-  filter(val => val % 2 === 0),
-  reduce((total, current) => total + current, 0)
-).subscribe(
-  val => print(`Subscription got val [${val}]`),
-  e => console.error(e),
-  () => print('Subscription done')
-)
-        </code></pre>
-        <ul>
-          <li><a href="https://rxjs-dev.firebaseapp.com/guide/operators">Operators</a> used to create or manipulate
-            observables
-          </li>
-          <li>RxJS uses operator piping to mimic "function chaining"</li>
-        </ul>
-      </section>
+      <section data-background="./images/example-02.png" data-background-size="contain"></section>
     </section>
 
     <!--stock quote demo-->
@@ -340,16 +268,26 @@ data$.pipe(
     <!--summary-->
     <section>
       <h1>Summary</h1>
-      <ul>
-        <li>Functional programming is about data flow and transformation using functions</li>
-        <li>FRP is an attempt to apply FP concepts, with little control over when data is available</li>
-        <li>Think of... "when data arrives, let it flow through series of functions to be processed" -
-          an observable chain
-        </li>
-        <li>FRP is simple, once you are familiar with its concepts</li>
-      </ul>
+      <div style="display: flex">
+        <img src="./images/stream.jpg" style="margin-right: 8px">
+        <ul>
+          <li>A way of thinking...</li>
+          <li>Think about how to design observable chains</li>
+          <li>Observable chains is used to model data flow and transformations over time</li>
+          <li>Write programs that is easy to read & maintain</li>
+        </ul>
+      </div>
     </section>
 
+    <!--tq-->
+    <section>
+      <h2>Thank You!</h2>
+      <br/><br/><br/><br/>
+      <small>Email: kctang@big2.net | Twitter: @kctang</small>
+      <br/>
+      <small><a href="https://github.com/kctang/frp101">github.com/kctang/frp101</a>
+      </small>
+    </section>
   </div>
 </div>
 
@@ -364,7 +302,7 @@ data$.pipe(
             {src: 'plugin/markdown/marked.js'},
             {src: 'plugin/markdown/markdown.js'},
             {src: 'plugin/notes/notes.js', async: true},
-            // {src: 'plugin/highlight/highlight.js', async: true}
+            {src: 'plugin/highlight/highlight.js', async: true}
         ]
     });
 </script>

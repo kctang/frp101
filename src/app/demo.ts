@@ -17,9 +17,9 @@ export async function main() {
   // asyncDemo.execAsyncWithObservable2()
 
   // dataFlowDemo.functionChaining()
-  // dataFlowDemo.pipeableOperator()
+  dataFlowDemo.pipeableOperator()
 
-  stock.run()
+  // stock.run()
 }
 
 const asyncDemo = {
@@ -61,25 +61,26 @@ const asyncDemo = {
 
   execAsyncWithPromise: () => {
     const doAddWithPromise = (v1, v2) => new Promise(resolve => {
-      resolve(v1 + v2)
+      setTimeout(() => {
+        resolve(v1 + v2)
+      }, 500)
     })
 
-    doAddWithPromise(2, 3).then(result => print(result))
-
+    doAddWithPromise(2, 3).then(result => {
+      print(result)
+    })
     print('done')
   },
 
   execAsyncWithObservable: () => {
-    const doAddPair$ = (input: number[]) => {
-      return new Observable(o => {
-        setTimeout(() => {
-          o.next(input[0] + input[1])
-          o.complete()
-        }, 500)
-      })
-    }
+    const doAddMultiplyDivide = (input: number[]) => new Observable(o => {
+      setTimeout(() => o.next(input[0] + input[1]), 100)
+      setTimeout(() => o.next(input[0] * input[1]), 200)
+      setTimeout(() => o.next(input[0] / input[1]), 300)
+      o.complete()
+    })
 
-    doAddPair$([2, 3]).subscribe(
+    doAddMultiplyDivide([2, 3]).subscribe(
       result => print(result),
       e => console.error(e),
       () => print('really done')
@@ -128,17 +129,21 @@ const dataFlowDemo = {
     const data$ = interval(100).pipe(
       map(no => no + 1),
       take(10)
+    ).subscribe(
+      val => console.log(val)
     )
 
-    data$.pipe(
-      map(val => val * 7),
-      filter(val => val % 2 === 0),
-      reduce((total, current) => total + current, 0)
-    ).subscribe(
-      val => print(`Subscription got val [${val}]`),
-      e => console.error(e),
-      () => print('Subscription done')
-    )
+    /*
+        data$.pipe(
+          map(val => val * 7),
+          filter(val => val % 2 === 0),
+          reduce((total, current) => total + current, 0)
+        ).subscribe(
+          val => print(`Subscription got val [${val}]`),
+          e => console.error(e),
+          () => print('Subscription done')
+        )
+    */
   }
 }
 
