@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-  <title>reveal.js</title>
+  <title>frp101</title>
 
   <link rel="stylesheet" href="css/reset.css">
   <link rel="stylesheet" href="css/reveal.css">
@@ -85,31 +85,24 @@ data.map(val =&gt; val * 7)
 const data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]</code></pre>
         <p><q style="font-size: smaller">What if I don't know how much data needs to be processed?</q></p>
         <p><q style="font-size: smaller">What if data is not ready to be processed?</q></p>
-        <pre><code class="hljs" data-trim>// an observable that generates 1 to 10
-// over a period of time (every 500ms)
-const data$ = interval(500).pipe(
-  map(no =&gt; no + 1),
-  take(10)
-)</code></pre>
         <ul>
           <li>Can we still map, filter, reduce, etc?</li>
-          <li class="fragment">Wait, what is this <span style="display: inline-block" class="fragment highlight-blue">observable</span>
-            thing?
-          </li>
         </ul>
       </section>
 
       <section>
-        <h3>Observable Chain</h3>
+        <h3>Yes, with "Observable Chain"</h3>
         <ul style="font-size: smaller">
           <li>~ takes observable as input instead of fixed length array data</li>
           <li><a href="https://rxjs-dev.firebaseapp.com/guide/operators">Operators</a> chaining used to
             create or manipulate observables, mimicing function chaining
           </li>
         </ul>
-        <pre><code class="hljs" data-trim data-line-numbers="7-9">const data$ = interval(500).pipe(
+        <pre><code class="hljs" data-trim data-line-numbers="9-11">// an observable that generates 1 to 10
+// over a period of time (every 500ms)
+const data$ = interval(500).pipe(
   map(no =&gt; no + 1),
-  take(5)
+  take(10)
 )
 
 data$.pipe(
@@ -122,6 +115,10 @@ data$.pipe(
   () =&gt; print('Subscription done')
 )</code></pre>
       </section>
+
+      <section>
+        <q>Wait, what is this observable thing?</q>
+      </section>
     </section>
 
     <!--async prog-->
@@ -133,7 +130,7 @@ data$.pipe(
       </section>
       <section>
         <h3>Common Scenarios</h3>
-        <p>Without an asynchronous programming, web browser (JavaScript engine) will hang when...</p>
+        <p>Without asynchronous programming, web browser (JavaScript engine) will hang when...</p>
         <ul>
           <li>File read/write [s]</li>
           <li>Make REST API call [s]</li>
@@ -191,6 +188,9 @@ data$.pipe(
             </code>
           </div>
         </div>
+      </section>
+      <section>
+        <q>So what?</q>
       </section>
     </section>
 

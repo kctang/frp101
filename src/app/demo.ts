@@ -10,14 +10,16 @@ const print = msg => console.log(`> ${msg}`)
 const printDebug = msg => console.debug(`> ${msg}`)
 
 export async function main() {
+  // TODO: uncomment specific lines to run demo
+
   // asyncDemo.execSync()
   // asyncDemo.execSyncWithCallback()
   // asyncDemo.execAsyncWithCallback()
   // asyncDemo.execAsyncWithPromise()
-  // asyncDemo.execAsyncWithObservable2()
+  asyncDemo.execAsyncWithObservable2()
 
   // dataFlowDemo.functionChaining()
-  dataFlowDemo.pipeableOperator()
+  // dataFlowDemo.pipeableOperator()
 
   // stock.run()
 }
@@ -76,8 +78,10 @@ const asyncDemo = {
     const doAddMultiplyDivide = (input: number[]) => new Observable(o => {
       setTimeout(() => o.next(input[0] + input[1]), 100)
       setTimeout(() => o.next(input[0] * input[1]), 200)
-      setTimeout(() => o.next(input[0] / input[1]), 300)
-      o.complete()
+      setTimeout(() => {
+        o.next(input[0] / input[1])
+        o.complete()
+      }, 300)
     })
 
     doAddMultiplyDivide([2, 3]).subscribe(
